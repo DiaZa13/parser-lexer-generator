@@ -7,18 +7,19 @@
 #define LANGUAGE_REGULAREXPRESSIONS_H
 
 #include <string>
+#include <list>
+#include "Characters.h"
 
 class regularExpressions {
 private:
-    char operators[5] = {'*', '+', '?', '.', '|'};
     std::string expression;
+    std::list<std::unique_ptr<Characters>> pexpression;
 
 public:
     explicit regularExpressions(std::string expression);
-    int getPrecedence(char c);
-    bool isOperator(char c);
+    void preprocess();
     bool checkExpression();
-    std::string toPostfix(const std::string& infix_expression);
+    std::list<std::unique_ptr<Characters>> toPostfix();
 
 };
 

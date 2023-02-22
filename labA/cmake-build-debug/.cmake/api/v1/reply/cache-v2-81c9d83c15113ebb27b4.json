@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/Zaray Corado/Desktop/Language/labA/cmake-build-debug"
+			"value" : "c:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -575,7 +575,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Zaray Corado/Desktop/Language/labA/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -647,7 +647,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/Zaray Corado/Desktop/Language/labA"
+			"value" : "C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1263,7 +1263,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Zaray Corado/Desktop/Language/labA/cmake-build-debug"
+			"value" : "C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug"
 		},
 		{
 			"name" : "Language_IS_TOP_LEVEL",
@@ -1287,7 +1287,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Zaray Corado/Desktop/Language/labA"
+			"value" : "C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",

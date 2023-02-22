@@ -6,13 +6,14 @@
 */
 
 #include <iostream>
-#include "regularExpressions.h"
-#include "expressionTree.h"
+#include "Token/regularExpressions.h"
+#include "ExpressionTree/expressionTree.h"
+
 using namespace std;
 
 int main() {
-
-    string n_expression, postfix;
+    string n_expression;
+    list<unique_ptr<Characters>> expression;
     // expression = "1+2-3*4+(5^6)*7/8/9*1+2";
 
     cout <<"Insert the expression: "<<endl;
@@ -20,11 +21,12 @@ int main() {
 
     // convert to postfix
     regularExpressions regex(n_expression);
-    postfix = regex.toPostfix(n_expression);
-    cout << "Postfix expression: "<< postfix <<endl;
+    regex.preprocess();
+    expression = regex.toPostfix();
+
 
     // evaluate the expression with an expression tree
-    expressionTree ex_tree(postfix);
+    expressionTree ex_tree(std::move(expression));
     ex_tree.getPostorder();
 
     return 0;

@@ -3,4 +3,4 @@ project(Language)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(main  expressionTree.cpp  regularExpressions.cpp main.cpp)
+add_executable(main ExpressionTree/expressionTree.cpp Token/regularExpressions.cpp main.cpp Token/Characters.cpp Token/Symbols.cpp Token/Operators.cpp)
