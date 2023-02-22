@@ -1,3 +1,0 @@
-C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug/CMakeFiles/main.dir
-C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Zaray Corado/Desktop/parser-lexer-generator/labA/cmake-build-debug/CMakeFiles/rebuild_cache.dir
