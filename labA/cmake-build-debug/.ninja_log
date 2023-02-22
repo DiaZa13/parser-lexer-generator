@@ -1,0 +1,11 @@
+# ninja log v5
+168	22158	6987072896042847	CMakeFiles/main.dir/main.cpp.obj	3f5b033bb29db651
+0	22511	6987072900189681	CMakeFiles/main.dir/expressionTree.cpp.obj	49b369e4012d26ed
+60	4115	6987073264923724	CMakeFiles/main.dir/regularExpressions.cpp.obj	c4902fdcc0f7d06c
+4116	7835	6987073291000906	main.exe	1e0039b43eeef267
+1366	20755	6987195275507579	CMakeFiles/main.dir/main.cpp.obj	3f5b033bb29db651
+1361	21502	6987195279127635	CMakeFiles/main.dir/regularExpressions.cpp.obj	c4902fdcc0f7d06c
+10	21659	6987195281797594	CMakeFiles/main.dir/expressionTree.cpp.obj	49b369e4012d26ed
+21670	27834	6987195342097586	main.exe	1e0039b43eeef267
+5	2948	6987198211342745	CMakeFiles/main.dir/expressionTree.cpp.obj	49b369e4012d26ed
+2948	3458	6987198216422753	main.exe	1e0039b43eeef267
