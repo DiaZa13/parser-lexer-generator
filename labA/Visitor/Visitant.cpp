@@ -2,7 +2,6 @@
 // Created by Zaray Corado on 2/23/2023.
 //
 
-#include "Visitant.h"
+#include "../Token/Characters.h"
 
-
-Visitant::Visitant() = default;
+Visitor::Visitor() = default;

@@ -2,7 +2,7 @@
 // Created by Zaray Corado on 2/22/2023.
 //
 
-#include "Operators.h"
+#include "Characters.h"
 
 Operators::Operators(char value) {
     this->value = value;
@@ -32,6 +32,6 @@ int Operators::getType() {
     return static_cast<int>(op_type);
 }
 
-void Operators::accept(Visitant *visitor) {
-    visitor->visitOperator(this);
+void Operators::accept(Visitor &visitor) {
+    visitor.visitOperator(this);
 }

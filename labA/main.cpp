@@ -8,6 +8,7 @@
 #include <iostream>
 #include "Token/regularExpressions.h"
 #include "ExpressionTree/expressionTree.h"
+#include "Visualization/Mermaid.h"
 
 using namespace std;
 
@@ -27,7 +28,8 @@ int main() {
     // evaluate the expression with an expression tree
     expressionTree ex_tree(std::move(expression));
     data = ex_tree.graphData();
-    cout << data;
+
+    Mermaid graph("flowchart TB", data);
 
     return 0;
 }

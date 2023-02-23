@@ -2,7 +2,7 @@
 // Created by Zaray Corado on 2/22/2023.
 //
 
-#include "Symbols.h"
+#include "Characters.h"
 
 Symbols::Symbols(char value) {
     this-> value = value;
@@ -17,6 +17,6 @@ int Symbols::getType() {
     return -1;
 }
 
-void Symbols::accept(Visitant *visitor){
-    visitor->visitSymbol(this);
+void Symbols::accept(Visitor &visitor){
+    visitor.visitSymbol(this);
 }

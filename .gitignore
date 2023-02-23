@@ -1,6 +1,9 @@
 # cmake build
 /labA/cmake-build-debug
 
+#graphs
+labA/*.html
+
 # Prerequisites
 *.d
 

@@ -9,8 +9,6 @@
 #include <cctype>
 #include <bits/stdc++.h>
 #include "regularExpressions.h"
-#include "Symbols.h"
-#include "Operators.h"
 
 regularExpressions::regularExpressions(std::string expression) {
     this->expression = std::move(expression);

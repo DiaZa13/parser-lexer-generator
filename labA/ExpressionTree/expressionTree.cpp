@@ -3,7 +3,6 @@
 //
 
 #include <string>
-#include <iostream>
 #include "expressionTree.h"
 
 expressionTree::expressionTree(std::list<std::unique_ptr<Characters>> expression) {
@@ -40,9 +39,7 @@ void expressionTree::postOrder(std::unique_ptr<Node> root) {
 }
 
 std::string expressionTree::graphData() {
-    expressionTree::visitor = new TreeGraph();
     expressionTree::postOrder(std::move(tree.top()));
-    std::string data = visitor->getGraphdata();
-    delete visitor;
+    std::string data = visitor.getGraphdata();
     return data;
 }

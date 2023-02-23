@@ -8,7 +8,6 @@
 #include <string>
 #include <bits/stdc++.h>
 #include "../Token/Characters.h"
-#include "../Visitor/TreeGraph.h"
 
 class expressionTree {
 
@@ -26,7 +25,7 @@ private:
     };
 
     std::stack<std::unique_ptr<Node>> tree;
-    TreeGraph *visitor;
+    TreeGraph visitor;
     void postOrder(std::unique_ptr<Node> root);
 
 public:
