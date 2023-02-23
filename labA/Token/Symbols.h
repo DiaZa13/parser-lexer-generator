@@ -14,6 +14,7 @@ public:
     explicit Symbols(char value);
     int getPrecedence() override;
     int getType() override;
+    void accept(Visitant* visitor) override;
 };
 
 

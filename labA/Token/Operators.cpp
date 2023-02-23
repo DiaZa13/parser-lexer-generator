@@ -31,3 +31,7 @@ int Operators::getPrecedence() {
 int Operators::getType() {
     return static_cast<int>(op_type);
 }
+
+void Operators::accept(Visitant *visitor) {
+    visitor->visitOperator(this);
+}

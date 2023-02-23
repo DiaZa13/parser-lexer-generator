@@ -16,3 +16,7 @@ int Symbols::getPrecedence() {
 int Symbols::getType() {
     return -1;
 }
+
+void Symbols::accept(Visitant *visitor){
+    visitor->visitSymbol(this);
+}

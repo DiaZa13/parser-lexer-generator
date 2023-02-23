@@ -12,7 +12,7 @@
 using namespace std;
 
 int main() {
-    string n_expression;
+    string n_expression, data;
     list<unique_ptr<Characters>> expression;
     // expression = "1+2-3*4+(5^6)*7/8/9*1+2";
 
@@ -24,10 +24,10 @@ int main() {
     regex.preprocess();
     expression = regex.toPostfix();
 
-
     // evaluate the expression with an expression tree
     expressionTree ex_tree(std::move(expression));
-    ex_tree.getPostorder();
+    data = ex_tree.graphData();
+    cout << data;
 
     return 0;
 }

@@ -34,10 +34,15 @@ void expressionTree::postOrder(std::unique_ptr<Node> root) {
     if (root != nullptr) {
         postOrder(std::move(root->left));
         postOrder(std::move(root->right));
-        std::cout << root->value->getValue()<<std::endl;
+//      accepts the visit
+        root->value->accept(expressionTree::visitor);
     }
 }
 
-void expressionTree::getPostorder() {
+std::string expressionTree::graphData() {
+    expressionTree::visitor = new TreeGraph();
     expressionTree::postOrder(std::move(tree.top()));
+    std::string data = visitor->getGraphdata();
+    delete visitor;
+    return data;
 }

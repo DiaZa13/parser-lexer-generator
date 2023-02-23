@@ -8,6 +8,7 @@
 #include <string>
 #include <bits/stdc++.h>
 #include "../Token/Characters.h"
+#include "../Visitor/TreeGraph.h"
 
 class expressionTree {
 
@@ -25,12 +26,12 @@ private:
     };
 
     std::stack<std::unique_ptr<Node>> tree;
-
+    TreeGraph *visitor;
     void postOrder(std::unique_ptr<Node> root);
 
 public:
     explicit expressionTree(std::list<std::unique_ptr<Characters>> expression);
-    void getPostorder();
+    std::string graphData();
 };
 
 #endif //LANGUAGE_EXPRESSIONTREE_H

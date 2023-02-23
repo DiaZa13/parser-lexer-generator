@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 
+class Visitant;
+
 class Characters {
 protected:
 //  the string representation of the character
@@ -19,6 +21,7 @@ public:
     [[nodiscard]] char getValue() const;
     virtual int getPrecedence() = 0;
     virtual int getType() = 0;
+    virtual void accept(Visitant* visitor) = 0;
 
 };
 
