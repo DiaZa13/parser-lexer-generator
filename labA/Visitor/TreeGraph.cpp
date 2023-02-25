@@ -15,7 +15,7 @@ void TreeGraph::visitOperator(Operators *operators) {
     if (operators->getType() == 1){
         auto only = (TreeGraph::nodes.top());
         TreeGraph::nodes.pop();
-        p_relation = std::to_string(count_nodes) + " --> " + std::to_string(std::get<1>(only)) + "\n";
+        p_relation = std::to_string(count_nodes) + " --> " + std::to_string(std::get<1>(only)) + "\n\t\t";
 
     }else if(operators->getType() == 2){
 //      gets the left child
@@ -25,12 +25,12 @@ void TreeGraph::visitOperator(Operators *operators) {
         auto right (TreeGraph::nodes.top());
         TreeGraph::nodes.pop();
         p_relation = std::to_string(count_nodes) + " --> " + std::to_string(std::get<1>(left)) + " & "+ \
-        std::to_string(std::get<1>(right)) + "\n";
+        std::to_string(std::get<1>(right)) + "\n\t\t";
 
     }
     TreeGraph::relations += p_relation;
     TreeGraph::nodes.push(std::make_tuple(operators->getValue(), count_nodes));
-    TreeGraph::def_nodes += std::to_string(count_nodes) + "((\"" + operators->getValue() + "\"))\n";
+    TreeGraph::def_nodes += std::to_string(count_nodes) + "((\"" + operators->getValue() + "\"))\n\t\t";
 }
 
 // If visits a symbol it only creates a node
@@ -38,7 +38,7 @@ void TreeGraph::visitSymbol(Symbols *symbol) {
     TreeGraph::count_nodes++;
     // to find out in an easy way the relationships
     TreeGraph::nodes.push(std::make_tuple(symbol->getValue(), count_nodes));
-    TreeGraph::def_nodes += std::to_string(count_nodes) + "((" + symbol->getValue() + "))\n";
+    TreeGraph::def_nodes += std::to_string(count_nodes) + "((" + symbol->getValue() + "))\n\t\t";
 }
 
 std::string TreeGraph::getGraphdata() {

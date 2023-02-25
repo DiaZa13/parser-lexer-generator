@@ -2,6 +2,7 @@
 #include "Mermaid.h"
 #include <fstream>
 #include <iostream>
+#include <windows.h>
 
 Mermaid::Mermaid(std::string flow, std::string graph){
     std::ofstream file("../graph.html", std::ios::out);
@@ -21,4 +22,9 @@ Mermaid::Mermaid(std::string flow, std::string graph){
         throw std::invalid_argument("AddPositiveIntegers arguments must be positive");
 
     file.close();
-};
+}
+
+void Mermaid::showGraph() {
+//        ShellExecute(NULL, "open", "http://dreamincode.net",
+//                     NULL, NULL, SW_SHOWNORMAL);
+}

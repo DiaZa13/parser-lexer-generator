@@ -8,7 +8,7 @@
 
 #include <string>
 #include <list>
-#include "Characters.h"
+#include "../Token/Characters.h"
 
 class regularExpressions {
 private:

@@ -25,7 +25,7 @@ private:
     };
 
     std::stack<std::unique_ptr<Node>> tree;
-    TreeGraph visitor;
+    AutomataVisitor visitor;
     void postOrder(std::unique_ptr<Node> root);
 
 public:
