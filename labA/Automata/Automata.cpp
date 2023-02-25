@@ -11,7 +11,6 @@ Transition::Transition(State state, const Symbols& symbols) {
     this->symbol = symbols;
 }
 
-
 const std::set<Symbols> &Automata::getSymbols() const {
     return symbols;
 }
@@ -44,11 +43,7 @@ void Automata::setStart(const State &start) {
     Automata::start = start;
 }
 
-void Automata::setAccepted(const std::set<State> &accepted) {
-    Automata::accepted = accepted;
-}
-
-void Automata::setTransitions(Transition &transition, const State &destiny) {
+void Automata::setTransitions(const Transition& transition, const State &destiny) {
     std::set<State> temp_states = {destiny};
     if (Automata::transitions.find(transition) != Automata::transitions.end()){
         temp_states.insert(Automata::transitions.at(transition).begin(), Automata::transitions.at(transition).end());
@@ -57,4 +52,12 @@ void Automata::setTransitions(Transition &transition, const State &destiny) {
     }else{
         Automata::transitions.insert(std::make_pair(transition, temp_states));
     }
+}
+
+void Automata::deleteTransitions(const Transition &transition) {
+    Automata::transitions.erase(transition);
+}
+
+void Automata::setAccepted(const State &accepted) {
+    Automata::accepted.insert(accepted);
 }

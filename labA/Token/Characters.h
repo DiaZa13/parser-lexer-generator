@@ -83,6 +83,14 @@ struct State{
         this->type = TRANSITION;
     };
 
+    void setType(TYPE type) {
+        State::type = type;
+    }
+
+    void setId(int id) {
+        State::id = id;
+    }
+
     State(int id, TYPE type){
         this->id = id;
         this->type = type;
@@ -135,28 +143,30 @@ public:
     const std::unordered_map<Transition, std::set<State>, Transition::HashFunction> &getTransitions() const;
 
     void setSymbols(const std::set<Symbols> &symbols);
-
     void setStates(const std::set<State> &states);
-
     void setStart(const State &start);
-
-    void setAccepted(const std::set<State> &accepted);
-
-    void setTransitions(Transition &transition, const State &destiny);
+    void setAccepted(const State &accepted);
+    void setTransitions(const Transition& transition, const State &destiny);
+    void deleteTransitions(const Transition& transition);
 };
 
 class NonDeterministic : public Automata{
 private:
     Symbols epsilon;
+
 public:
     NonDeterministic();
     NonDeterministic(char symbol_value, State origin, State end);
+    NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left);
     NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition);
     NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right);
+    NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right);
     NonDeterministic(std::set<Symbols> symbols, std::set<State> states, State start, std::set<State> accepted, std::unordered_map<Transition, std::set<State>> transitions);
     std::set<State> move(State origin, Symbols symbol) override;
     State getAcceptedState();
     Symbols getEpsilon() const;
+    void deleteState(State state);
+    void updateStates(int increment);
 };
 
 class AutomataVisitor : public Visitor{
