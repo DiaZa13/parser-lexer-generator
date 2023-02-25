@@ -12,9 +12,17 @@ NonDeterministic::NonDeterministic() {
 
 NonDeterministic::NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition) {
     NonDeterministic::states = {start, end};
-    NonDeterministic::transitions = std::move(last_transition);
     NonDeterministic::epsilon = Symbols('<');
+    NonDeterministic::transitions = std::move(last_transition);
 }
+
+NonDeterministic::NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right) {
+    NonDeterministic::states = {start, end};
+    NonDeterministic::epsilon = Symbols('<');
+    NonDeterministic::transitions.insert(left.begin(), left.end());
+    NonDeterministic::transitions.insert(right.begin(), right.end());
+}
+
 
 NonDeterministic::NonDeterministic(char symbol_value, State origin, State end) {
     NonDeterministic::epsilon = Symbols('<');

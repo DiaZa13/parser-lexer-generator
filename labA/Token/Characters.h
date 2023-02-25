@@ -150,8 +150,9 @@ private:
     Symbols epsilon;
 public:
     NonDeterministic();
-    NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition);
     NonDeterministic(char symbol_value, State origin, State end);
+    NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition);
+    NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right);
     NonDeterministic(std::set<Symbols> symbols, std::set<State> states, State start, std::set<State> accepted, std::unordered_map<Transition, std::set<State>> transitions);
     std::set<State> move(State origin, Symbols symbol) override;
     State getAcceptedState();

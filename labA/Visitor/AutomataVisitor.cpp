@@ -90,19 +90,62 @@ void AutomataVisitor::maybeAutom(std::unique_ptr<NonDeterministic> child) {
     State end(count_states, ACCEPT);
 
     NonDeterministic epsilon_transition(child->getEpsilon().getValue(), start, end);
-//    this->concatenationAutom(std::move(child), std::make_unique<NonDeterministic>(epsilon_transition));
+    this->unionAutom(std::move(child), std::make_unique<NonDeterministic>(epsilon_transition));
 }
 
 void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
 
+
 }
 
 void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
+    count_states ++;
+    State start(count_states, START);
+    count_states ++;
+    State end(count_states, ACCEPT);
+    NonDeterministic kleene(start, end, left->getTransitions(), right->getTransitions());
 
+////  symbols
+//    kleene.setSymbols(child->getSymbols());
+//
+////  define start
+//    kleene.setStart(start);
+//
+////  define accepted
+//    std::set<State> accepted = {end};
+//    kleene.setAccepted(accepted);
 }
 
-void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> righ) {
+void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
+    count_states ++;
+    State start(count_states, START);
+    count_states ++;
+    State end(count_states, ACCEPT);
+    NonDeterministic joining(start, end, left->getTransitions(), right->getTransitions());
 
+//  symbols
+    joining.setSymbols(left->getSymbols());
+    joining.setSymbols(right->getSymbols());
+
+//  define start
+    joining.setStart(start);
+
+//  define accepted
+    std::set<State> accepted = {end};
+    joining.setAccepted(accepted);
+    std::destroy(accepted.begin(), accepted.end());
+
+//transitions
+    Transition a(start, left->getEpsilon());
+    joining.setTransitions(a, left->getStart());
+    joining.setTransitions(a, right->getStart());
+
+    Transition b(left->getAcceptedState(), left->getEpsilon());
+    joining.setTransitions(b, end);
+    Transition c(right->getAcceptedState(), left->getEpsilon());
+    joining.setTransitions(c, end);
+
+    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(joining));
 }
 
 std::string AutomataVisitor::getGraphdata() {

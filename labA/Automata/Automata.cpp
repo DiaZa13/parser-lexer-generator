@@ -11,6 +11,7 @@ Transition::Transition(State state, const Symbols& symbols) {
     this->symbol = symbols;
 }
 
+
 const std::set<Symbols> &Automata::getSymbols() const {
     return symbols;
 }
