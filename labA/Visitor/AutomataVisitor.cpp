@@ -153,18 +153,13 @@ void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left,
 //  symbols
     concatenation.setSymbols(left->getSymbols());
     concatenation.setSymbols(right->getSymbols());
-
-//  states
-    concatenation.setStates(left->getStates());
-    concatenation.setStates(right->getStates());
-//  remove the last state
-    concatenation.deleteState(right->getAcceptedState());
+    right->deleteState(right->getStart());
 
 //  define start
     concatenation.setStart(left->getStart());
 
 //  define accepted
-    concatenation.setAccepted(right->getStart());
+    concatenation.setAccepted(right->getAcceptedState());
 
     std::list<Transition> to_delete;
 
@@ -182,6 +177,24 @@ void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left,
     for (auto x: to_delete){
         concatenation.deleteTransitions(x);
     }
+
+    //  define the new states type
+    std::set<State> new_states;
+    for (auto i: left->getStates()){
+        if (i.type == ACCEPT)
+            new_states.insert(State(i.id, TRANSITION));
+        else
+            new_states.insert(i);
+    }
+    for (auto i: right->getStates()){
+        if (i.type == START)
+            new_states.insert(State(i.id, TRANSITION));
+        else
+            new_states.insert(i);
+    }
+
+    concatenation.setStates(new_states);
+    std::destroy(new_states.begin(), new_states.end());
 
 //    count_states--;
 
@@ -239,9 +252,16 @@ void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::un
 std::string AutomataVisitor::getGraphdata() {
     std::string data;
     std::unique_ptr<NonDeterministic> result = std::move(AutomataVisitor::automatas.top());
+    // create the nodes
+    for (auto x: result->getStates()){
+        if (x.type != ACCEPT){
+            data += std::to_string(x.id) + "((\"" + std::to_string(x.id) + "\"))\n\t\t";
+        }else
+            data += std::to_string(x.id) + "(((\"" + std::to_string(x.id) + "\")))\n\t\t";
+    }
     for(auto i: result->getTransitions()){
         for (auto state: i.second){
-            data += "(" + std::to_string(i.first.origin.id) + ", "+i.first.symbol.getValue() + ") -> " + std::to_string(state.id) + "\n";
+            data += std::to_string(i.first.origin.id) + "-- " + i.first.symbol.getValue() + " -->" + std::to_string(state.id) + "\n\t\t";
         }
     }
     return data;

@@ -29,7 +29,7 @@ int main() {
     expressionTree ex_tree(std::move(expression));
     data = ex_tree.graphData();
     cout << data;
-//    Mermaid graph("flowchart TB", data);
+    Mermaid graph("flowchart LR", data);
 
     return 0;
 }
