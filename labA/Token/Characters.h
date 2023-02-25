@@ -119,6 +119,8 @@ public:
 
     void setSymbols(const std::set<Symbols> &symbols);
     void setStates(std::list<std::shared_ptr<State>> states);
+    void setStates(std::list<std::shared_ptr<State>> left, std::list<std::shared_ptr<State>> right);
+    void deleteState(std::shared_ptr<State> state);
 };
 
 class NonDeterministic : public Automata{

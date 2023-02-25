@@ -80,8 +80,29 @@ void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
 }
 
 void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
-
-//    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(concatenation));
+    Symbols epsilon('<');
+    NonDeterministic concatenation;
+//  symbols
+    std::set<Symbols> symbols = {epsilon};
+    symbols.insert(left->getSymbols().begin(), left->getSymbols().end());
+    symbols.insert(right->getSymbols().begin(), right->getSymbols().end());
+    concatenation.setSymbols(symbols);
+//  initial and accept states
+    auto start = left->getStart();
+    auto end = right->getEnd();
+//  transitions
+    for (auto &x:left->getStates()){
+        if (x->edge_a == left->getEnd())
+            x->edge_a = right->getStart();
+        else if (x->edge_b == left->getEnd())
+            x->edge_b = right->getStart();
+    }
+//  save the old states into the new automata
+    concatenation.setStates(left->getStates(), right->getStates());
+//  delete unnecessary states
+//    concatenation.deleteState(left->getEnd());
+//    left->getEnd().reset();
+    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(concatenation));
 }
 
 void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
@@ -134,8 +155,10 @@ std::string AutomataVisitor::getGraphdata() {
 
     for (auto &x:states->getStates()){
         if(x->flow != ACCEPT){
-            nodes += std::to_string(x->id) + "((\"" + std::to_string(x->id) + "\"))\n\t\t";
-            transitions += std::to_string(x->id) + "-- " + x->symbol.getValue() + " -->" + std::to_string(x->edge_a->id) + "\n\t\t";
+            if (x->edge_a != nullptr){
+                nodes += std::to_string(x->id) + "((\"" + std::to_string(x->id) + "\"))\n\t\t";
+                transitions += std::to_string(x->id) + "-- " + x->symbol.getValue() + " -->" + std::to_string(x->edge_a->id) + "\n\t\t";
+            }
             if (x->edge_b != nullptr)
                 transitions += std::to_string(x->id) + "-- " + x->symbol.getValue() + " -->" + std::to_string(x->edge_b->id) + "\n\t\t";
         }else{
