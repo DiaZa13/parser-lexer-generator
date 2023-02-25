@@ -70,12 +70,20 @@ void AutomataVisitor::kleeneAutom(std::unique_ptr<NonDeterministic> child) {
 }
 
 void AutomataVisitor::maybeAutom(std::unique_ptr<NonDeterministic> child) {
+    Symbols temp_sym = Symbols('<');
+    std::shared_ptr<State> start = std::make_shared<State>(State(temp_sym, EPSILON));
+    std::shared_ptr<State> end = std::make_shared<State>();
+    start->edge_a = end;
+    NonDeterministic symbol_auto(temp_sym, start, end);
+
+    this->unionAutom(std::make_unique<NonDeterministic>(symbol_auto), std::move(child));
 
 }
 
 void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
 
-//    this->concatenationAutom(std::make_unique<NonDeterministic>(left), std::move(child_a));
+
+//    this->concatenationAutom(std::make_unique<NonDeterministic>(), std::move(child_a));
 
 }
 
@@ -99,9 +107,9 @@ void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left,
     }
 //  save the old states into the new automata
     concatenation.setStates(left->getStates(), right->getStates());
-//  delete unnecessary states
-//    concatenation.deleteState(left->getEnd());
-//    left->getEnd().reset();
+//  TODO delete the unnecessary state
+//   concatenation.deleteState(left->getEnd());
+//   left->getEnd().reset();
     AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(concatenation));
 }
 
