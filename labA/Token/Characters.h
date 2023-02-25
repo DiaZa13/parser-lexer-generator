@@ -9,6 +9,7 @@
 #include <memory>
 #include <stack>
 #include <set>
+#include <list>
 #include <unordered_map>
 
 class Characters {
@@ -72,105 +73,70 @@ public:
 };
 
 /* ------------------------------  AUTOMATA CLASS DECLARATION ---------------------------- */
-enum TYPE {START = 1, TRANSITION = 2, ACCEPT = 3};
+enum FLOW {START, TRANSITION, ACCEPT};
+enum TYPE {IMPORTANT, EPSILON};
 
+// The state conforms state and transitions
 struct State{
-    int id;
-    TYPE type;
-
-    State(){
-        this-> id = -1;
-        this->type = TRANSITION;
-    };
-
-    void setType(TYPE type) {
-        State::type = type;
-    }
-
-    void setId(int id) {
-        State::id = id;
-    }
-
-    State(int id, TYPE type){
-        this->id = id;
-        this->type = type;
-    }
-    bool operator<(const State &state) const{
-        return this->id < state.id;
-    }
-};
-
-struct Transition{
-    State origin;
+    int id = 0;
     Symbols symbol;
+    FLOW flow;
+    TYPE type;
+    std::shared_ptr<State> edge_a;
+    std::shared_ptr<State> edge_b;
 
-    Transition(State state, const Symbols& symbols);
-
-    bool operator==(const Transition& otherTrans) const
-    {
-        if (this->origin.id == otherTrans.origin.id && this->symbol.getValue() == otherTrans.symbol.getValue()) return true;
-        else return false;
-    }
-
-    struct HashFunction
-    {
-        size_t operator()(const Transition& transition) const
-        {
-            size_t state = std::hash<int>()(transition.origin.id) << 1;
-            size_t symb = std::hash<int>()(transition.symbol.getId());
-            return state ^ symb;
-        }
+    explicit State(Symbols &symbol, TYPE type){
+        this->symbol = symbol;
+        this->flow = START;
+        this->type = type;
+//      this is the immediately next state
+        this->edge_a = nullptr;
+        this->edge_b = nullptr;
     };
 
+    explicit State(){
+//        this->symbol = symbol;
+        this->flow = ACCEPT;
+        this->type = EPSILON;
+//      this is the immediately next state
+        this->edge_a = nullptr;
+        this->edge_b = nullptr;
+    };
 };
+
 
 class Automata {
 protected:
     std::set<Symbols> symbols;
-    std::set<State> states;
-    State start;
-    std::set<State> accepted;
-    std::unordered_map<Transition, std::set<State>, Transition::HashFunction> transitions;
+    std::list<std::shared_ptr<State>> states;
 
 public:
     Automata();
-    virtual std::set<State> move(State origin, Symbols symbol) = 0;
+    virtual std::shared_ptr<State> move(std::shared_ptr<State> origin, Symbols symbol) = 0;
 
-    const std::set<Symbols> &getSymbols() const;
-    const std::set<State> &getStates();
-    const State getStart() const;
-    const std::set<State> &getAccepted() const;
-    const std::unordered_map<Transition, std::set<State>, Transition::HashFunction> &getTransitions() const;
+    [[nodiscard]] const std::set<Symbols> &getSymbols() const;
+    std::list<std::shared_ptr<State>> getStates();
 
     void setSymbols(const std::set<Symbols> &symbols);
-    void setStates(const std::set<State> &states);
-    void setStart(const State &start);
-    void setAccepted(const State &accepted);
-    void setTransitions(const Transition& transition, const State &destiny);
-    void deleteTransitions(const Transition& transition);
+    void setStates(std::list<std::shared_ptr<State>> states);
 };
 
 class NonDeterministic : public Automata{
-private:
-    Symbols epsilon;
 
 public:
     NonDeterministic();
-    NonDeterministic(char symbol_value, State origin, State end);
-    NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left);
-    NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition);
-    NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right);
-    NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right);
-    NonDeterministic(std::set<Symbols> symbols, std::set<State> states, State start, std::set<State> accepted, std::unordered_map<Transition, std::set<State>> transitions);
-    std::set<State> move(State origin, Symbols symbol) override;
-    State getAcceptedState();
-    Symbols getEpsilon() const;
-    void deleteState(State state);
-    void updateStates(int increment);
+    std::shared_ptr<State> move(std::shared_ptr<State> origin, Symbols symbol) override;
+    NonDeterministic(Symbols symbol, std::shared_ptr<State> start, std::shared_ptr<State> end);
+    NonDeterministic(std::set<Symbols> symbols, std::list<std::shared_ptr<State>> child_states);
+    NonDeterministic(std::set<Symbols> symbols, std::list<std::shared_ptr<State>> left_states, std::list<std::shared_ptr<State>> right_states);
+
+    std::shared_ptr<State> getStart();
+    std::shared_ptr<State> getEnd();
+    void addState(std::shared_ptr<State> state_start, std::shared_ptr<State> state_end);
 };
 
 class AutomataVisitor : public Visitor{
-    int count_states = 0;
+    std::list<std::shared_ptr<State>> check;
     std::stack<std::unique_ptr<NonDeterministic>> automatas;
 public:
     AutomataVisitor();
@@ -181,6 +147,7 @@ public:
     void positiveAutom(std::unique_ptr<NonDeterministic> child);
     void unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> righ);
     void concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right);
+    void statesIdentifiers(std::shared_ptr<State> start, int count);
     std::string getGraphdata() override;
 };
 

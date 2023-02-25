@@ -3,17 +3,18 @@
 //
 #include "../Token/Characters.h"
 #include <list>
+#include <bits/stdc++.h>
 
 AutomataVisitor::AutomataVisitor() = default;
 
 void AutomataVisitor::visitSymbol(Symbols *symbol) {
-//  every time that founds a symbol it has to create an automata that has two states
-    count_states ++;
-    State start(count_states, START);
-    count_states ++;
-    State end(count_states, ACCEPT);
+    TYPE type = (symbol->getValue() != '<') ? IMPORTANT : EPSILON;
+    Symbols temp_sym = Symbols(symbol->getValue());
+    std::shared_ptr<State> start = std::make_shared<State>(State(temp_sym, type));
+    std::shared_ptr<State> end = std::make_shared<State>();
+    start->edge_a = end;
 
-    NonDeterministic symbol_auto(symbol->getValue(), start, end);
+    NonDeterministic symbol_auto(temp_sym, start, end);
     AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(symbol_auto));
 }
 
@@ -45,224 +46,87 @@ void AutomataVisitor::visitOperator(Operators *operators) {
 }
 
 void AutomataVisitor::kleeneAutom(std::unique_ptr<NonDeterministic> child) {
-    count_states ++;
-    State start(count_states, START);
-    count_states ++;
-    State end(count_states, ACCEPT);
-
-    NonDeterministic kleene(start, end, child->getTransitions());
-
+    Symbols epsilon('<');
+    NonDeterministic kleene;
 //  symbols
-    kleene.setSymbols(child->getSymbols());
-
-//  define start
-    kleene.setStart(start);
-
-//  define accepted
-    kleene.setAccepted(end);
-
+    std::set<Symbols> symbols = {epsilon};
+    symbols.insert(child->getSymbols().begin(), child->getSymbols().end());
+    kleene.setSymbols(symbols);
+//  initial and accept states
+    auto child_start = child->getStart();
+    auto child_end = child->getEnd();
+    child_end->symbol = epsilon;
+    std::shared_ptr<State> start = std::make_shared<State>(State(epsilon, EPSILON));
+    std::shared_ptr<State> end = std::make_shared<State>();
+    kleene.setStates(child->getStates());
+    kleene.addState(start, end);
 //  transitions
-    Transition a(start, child->getEpsilon());
-    kleene.setTransitions(a, child->getStart());
+    start->edge_a = child_start;
+    start->edge_b = end;
+    child_end->edge_a = end;
+    child_end->edge_b = child_start;
 
-    Transition b(child->getAcceptedState(), child->getEpsilon());
-    kleene.setTransitions(b, end);
-    kleene.setTransitions(b, child->getStart());
-
-    Transition c(start, child->getEpsilon());
-    kleene.setTransitions(c, end);
-
-//  define the new states type
-    std::set<State> new_states;
-    for (auto i: child->getStates()){
-        if (i.type == START || i.type == ACCEPT)
-            new_states.insert(State(i.id, TRANSITION));
-        else
-            new_states.insert(i);
-    }
-
-    kleene.setStates(new_states);
-    std::destroy(new_states.begin(), new_states.end());
 
     AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(kleene));
 }
 
 void AutomataVisitor::maybeAutom(std::unique_ptr<NonDeterministic> child) {
-    count_states ++;
-    State start(count_states, START);
-    count_states ++;
-    State end(count_states, ACCEPT);
 
-    NonDeterministic epsilon_transition(child->getEpsilon().getValue(), start, end);
-    this->unionAutom(std::move(child), std::make_unique<NonDeterministic>(epsilon_transition));
 }
 
 void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
-    NonDeterministic left(child->getTransitions());
-    left.setSymbols(child->getSymbols());
-//  states
-    int increment = child->getStates().size();
-    std::set<State> new_states;
-    for(auto x : child->getStates()) {
-        count_states ++;
-        if (x.type == START){
-            State start(count_states, START);
-            new_states.insert(start);
-            left.setStart(start);
-        }else if (x.type == ACCEPT){
-            State end(count_states, START);
-            new_states.insert(end);
-            left.setAccepted(end);
-        }else{
-            State state(count_states, TRANSITION);
-            new_states.insert(state);
-        }
-    }
-    left.setStates(new_states);
-    std::destroy(new_states.begin(), new_states.end());
 
-    std::list<Transition> to_delete;
-    for(auto i: left.getTransitions()){
-        int old = i.first.origin.id;
-        State o(old + increment, i.first.origin.type);
-        Transition a(o, i.first.symbol);
-        for (auto x : i.second){
-            State o(x.id + increment, i.first.origin.type);
-            left.setTransitions(a, o);
-        }
-        to_delete.push_back(i.first);
-    }
-
-    for (auto x: to_delete){
-        left.deleteTransitions(x);
-    }
-    std::destroy(to_delete.begin(), to_delete.end());
-
-    this->kleeneAutom(std::move(child));
-    std::unique_ptr<NonDeterministic> child_a = std::move(AutomataVisitor::automatas.top());
-    AutomataVisitor::automatas.pop();
-
-    this->concatenationAutom(std::make_unique<NonDeterministic>(left), std::move(child_a));
+//    this->concatenationAutom(std::make_unique<NonDeterministic>(left), std::move(child_a));
 
 }
 
 void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
 
-    NonDeterministic concatenation(left->getTransitions(), right->getTransitions());
-
-//  symbols
-    concatenation.setSymbols(left->getSymbols());
-    concatenation.setSymbols(right->getSymbols());
-    right->deleteState(right->getStart());
-
-//  define start
-    concatenation.setStart(left->getStart());
-
-//  define accepted
-    concatenation.setAccepted(right->getAcceptedState());
-
-    std::list<Transition> to_delete;
-
-    for(auto i: concatenation.getTransitions()){
-        if (i.first.origin.id == right->getStart().id){
-            Transition a(left->getAcceptedState(), i.first.symbol);
-            for (auto x: i.second){
-                concatenation.setTransitions(a, x);
-            }
-           to_delete.push_back(i.first);
-        }
-    }
-
-//  delete the last transitions
-    for (auto x: to_delete){
-        concatenation.deleteTransitions(x);
-    }
-
-    //  define the new states type
-    std::set<State> new_states;
-    for (auto i: left->getStates()){
-        if (i.type == ACCEPT)
-            new_states.insert(State(i.id, TRANSITION));
-        else
-            new_states.insert(i);
-    }
-    for (auto i: right->getStates()){
-        if (i.type == START)
-            new_states.insert(State(i.id, TRANSITION));
-        else
-            new_states.insert(i);
-    }
-
-    concatenation.setStates(new_states);
-    std::destroy(new_states.begin(), new_states.end());
-
-//    count_states--;
-
-    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(concatenation));
+//    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(concatenation));
 }
 
 void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
-    count_states ++;
-    State start(count_states, START);
-    count_states ++;
-    State end(count_states, ACCEPT);
-    NonDeterministic joining(start, end, left->getTransitions(), right->getTransitions());
 
-//  symbols
-    joining.setSymbols(left->getSymbols());
-    joining.setSymbols(right->getSymbols());
-
-//states
-    std::set<State> new_states;
-    for (auto i: left->getStates()){
-        if (i.type == START || i.type == ACCEPT)
-            new_states.insert(State(i.id, TRANSITION));
-        else
-            new_states.insert(i);
-    }
-    for (auto i: right->getStates()){
-        if (i.type == START || i.type == ACCEPT)
-            new_states.insert(State(i.id, TRANSITION));
-        else
-            new_states.insert(i);
-    }
-
-    joining.setStates(new_states);
-    std::destroy(new_states.begin(), new_states.end());
-
-//  define start
-    joining.setStart(start);
-
-//  define accepted
-    joining.setAccepted(end);
 
 //transitions
-    Transition a(start, left->getEpsilon());
-    joining.setTransitions(a, left->getStart());
-    joining.setTransitions(a, right->getStart());
+//    joining.setTransition(start, left->getEpsilon(), State(left->getStart().id+count, TRANSITION));
+//    joining.setTransition(start, left->getEpsilon(), State(right->getStart().id+count, TRANSITION));
+//    joining.setTransition(State(left->getAcceptedState().id+count,TRANSITION), left->getEpsilon(), end);
+//    joining.setTransition(State(right->getAcceptedState().id+count, TRANSITION), left->getEpsilon(), end);
 
-    Transition b(left->getAcceptedState(), left->getEpsilon());
-    joining.setTransitions(b, end);
-    Transition c(right->getAcceptedState(), left->getEpsilon());
-    joining.setTransitions(c, end);
+//    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(joining));
+}
 
-    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(joining));
+void AutomataVisitor::statesIdentifiers(std::shared_ptr<State> start, int count) {
+//  TODO Validate to avoid max-depth recursion
+    bool exists = std::find(this->check.begin(), this->check.end(), start) != this->check.end();
+    if(start != nullptr && !exists){
+        count++;
+        this->check.push_back(start);
+        statesIdentifiers(start->edge_a, count);
+        statesIdentifiers(start->edge_b, count);
+        start->id = count;
+    }
 }
 
 std::string AutomataVisitor::getGraphdata() {
-    std::string data;
-    std::unique_ptr<NonDeterministic> result = std::move(AutomataVisitor::automatas.top());
-    // create the nodes
-    for (auto x: result->getStates()){
-        if (x.type != ACCEPT){
-            data += std::to_string(x.id) + "((\"" + std::to_string(x.id) + "\"))\n\t\t";
-        }else
-            data += std::to_string(x.id) + "(((\"" + std::to_string(x.id) + "\")))\n\t\t";
-    }
-    for(auto i: result->getTransitions()){
-        for (auto state: i.second){
-            data += std::to_string(i.first.origin.id) + "-- " + i.first.symbol.getValue() + " -->" + std::to_string(state.id) + "\n\t\t";
+    std::string nodes;
+    std::string transitions;
+    auto states = std::move(automatas.top());
+    int count = 0;
+    this->statesIdentifiers(states->getStates().front(), count);
+
+    for (auto &x:states->getStates()){
+        if(x->flow != ACCEPT){
+            nodes += std::to_string(x->id) + "((\"" + std::to_string(x->id) + "\"))\n\t\t";
+            transitions += std::to_string(x->id) + "-- " + x->symbol.getValue() + " -->" + std::to_string(x->edge_a->id) + "\n\t\t";
+            if (x->edge_b != nullptr)
+                transitions += std::to_string(x->id) + "-- " + x->symbol.getValue() + " -->" + std::to_string(x->edge_b->id) + "\n\t\t";
+        }else{
+            nodes += std::to_string(x->id) + "(((\"" + std::to_string(x->id) + "\")))\n\t\t";
         }
     }
-    return data;
+    return nodes + transitions;
 }
+
+

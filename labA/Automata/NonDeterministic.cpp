@@ -5,85 +5,56 @@
 #include "../Token/Characters.h"
 
 NonDeterministic::NonDeterministic() {
-//    NonDeterministic::epsilon = Symbols('<');
-//    NonDeterministic::symbols.insert(epsilon);
 }
 
-NonDeterministic::NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> last_transition) {
-    NonDeterministic::states = {start, end};
-    NonDeterministic::epsilon = Symbols('<');
-    NonDeterministic::transitions = std::move(last_transition);
+NonDeterministic::NonDeterministic(Symbols symbol, std::shared_ptr<State> start, std::shared_ptr<State> end) {
+    //  Constructor for symbols
+    this->symbols.insert(symbol);
+    this->states.push_front(std::move(start));
+    this->states.push_back(std::move(end));
 }
 
-NonDeterministic::NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left,
-                                   std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right) {
-    NonDeterministic::epsilon = Symbols('<');
-    NonDeterministic::transitions.insert(left.begin(), left.end());
-    NonDeterministic::transitions.insert(right.begin(), right.end());
 
+NonDeterministic::NonDeterministic(std::set<Symbols> symbols, std::list<std::shared_ptr<State>> child_states) {
+//  define epsilon symbol
+    Symbols epsilon('<');
+    this->symbols = {epsilon};
+    this->symbols.insert(symbols.begin(), symbols.end());
+    this->setStates(std::move(child_states));
 }
 
-NonDeterministic::NonDeterministic(std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left) {
-    NonDeterministic::epsilon = Symbols('<');
-    NonDeterministic::transitions.insert(left.begin(), left.end());
-
+NonDeterministic::NonDeterministic(std::set<Symbols> symbols, std::list<std::shared_ptr<State>> left_states,
+                                   std::list<std::shared_ptr<State>> right_states) {
+    //  define epsilon symbol
+    Symbols epsilon('<');
+    this->symbols = {epsilon};
+    this->symbols.insert(symbols.begin(), symbols.end());
+    this->setStates(std::move(left_states));
+    this->setStates(std::move(right_states));
 }
 
-NonDeterministic::NonDeterministic(State start, State end, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> left, std::unordered_map<Transition, std::set<State>, Transition::HashFunction> right) {
-    NonDeterministic::states = {start, end};
-    NonDeterministic::epsilon = Symbols('<');
-    NonDeterministic::transitions.insert(left.begin(), left.end());
-    NonDeterministic::transitions.insert(right.begin(), right.end());
+std::shared_ptr<State> NonDeterministic::move(std::shared_ptr<State> origin, Symbols symbol) {
+    return states.back();
 }
 
-NonDeterministic::NonDeterministic(char symbol_value, State origin, State end) {
-    NonDeterministic::epsilon = Symbols('<');
-    Symbols symbol(symbol_value);
-    NonDeterministic::symbols = {symbol, epsilon};
-    NonDeterministic::start = origin;
-    NonDeterministic::states = {origin, end};
-    NonDeterministic::accepted = {end};
-    Transition transition(origin, symbol);
-    NonDeterministic::transitions = {{transition, accepted}};
-}
-
-std::set<State> NonDeterministic::move(State origin, Symbols symbol) {
-    std::set<State> test = {origin};
-    return test;
-}
-
-Symbols NonDeterministic::getEpsilon() const {
-    return epsilon;
-}
-
-NonDeterministic::NonDeterministic(std::set<Symbols> symbols, std::set<State> states, State start,
-                                   std::set<State> accepted,
-                                   std::unordered_map<Transition, std::set<State>> transitions) {
-    NonDeterministic::symbols = std::move(symbols);
-    NonDeterministic::states = std::move(states);
-    NonDeterministic::accepted = std::move(accepted);
-    NonDeterministic::transitions.merge(transitions);
-
-}
-
-State NonDeterministic::getAcceptedState() {
-    auto end = next(this->accepted.begin(), 0);
-    return *end;
-}
-
-void NonDeterministic::deleteState(State state) {
-    auto delete_state = NonDeterministic::states.find(state);
-    NonDeterministic::states.erase(*delete_state);
-}
-
-void NonDeterministic::updateStates(int increment) {
-    for (auto x : NonDeterministic::states){
-        x.id += increment;
-        if (x.type == START)
-            this->setStart(x);
-        if (x.type == ACCEPT)
-            this->setAccepted(x);
+std::shared_ptr<State> NonDeterministic::getStart() {
+    for (auto &x: states){
+        if (x->flow == START)
+            return x;
     }
 }
+
+std::shared_ptr<State> NonDeterministic::getEnd() {
+    for (auto &x: states){
+        if (x->flow == ACCEPT)
+            return x;
+    }
+}
+
+void NonDeterministic::addState(std::shared_ptr<State> state_start, std::shared_ptr<State> state_end) {
+    states.push_front(state_start);
+    states.push_back(state_end);
+}
+
 
 
