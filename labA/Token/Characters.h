@@ -137,6 +137,7 @@ public:
 
 class AutomataVisitor : public Visitor{
     std::list<std::shared_ptr<State>> check;
+    int count_states = 0;
     std::stack<std::unique_ptr<NonDeterministic>> automatas;
 public:
     AutomataVisitor();
@@ -147,7 +148,7 @@ public:
     void positiveAutom(std::unique_ptr<NonDeterministic> child);
     void unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> righ);
     void concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right);
-    void statesIdentifiers(std::shared_ptr<State> start, int count);
+    void statesIdentifiers(std::shared_ptr<State> start);
     std::string getGraphdata() override;
 };
 

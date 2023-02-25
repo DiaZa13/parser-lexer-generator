@@ -66,7 +66,6 @@ void AutomataVisitor::kleeneAutom(std::unique_ptr<NonDeterministic> child) {
     child_end->edge_a = end;
     child_end->edge_b = child_start;
 
-
     AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(kleene));
 }
 
@@ -86,26 +85,44 @@ void AutomataVisitor::concatenationAutom(std::unique_ptr<NonDeterministic> left,
 }
 
 void AutomataVisitor::unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right) {
+    Symbols epsilon('<');
+    NonDeterministic joining;
+//  symbols
+    std::set<Symbols> symbols = {epsilon};
+    symbols.insert(left->getSymbols().begin(), left->getSymbols().end());
+    symbols.insert(right->getSymbols().begin(), right->getSymbols().end());
+    joining.setSymbols(symbols);
+//  initial and accept states
+    auto left_start = left->getStart();
+    auto right_start = right->getStart();
+    auto left_end = left->getEnd();
+    auto right_end = right->getEnd();
+    left_end->symbol = epsilon;
+    right_end->symbol = epsilon;
+    std::shared_ptr<State> start = std::make_shared<State>(State(epsilon, EPSILON));
+    std::shared_ptr<State> end = std::make_shared<State>();
+//  save the old states into the new automata
+    joining.setStates(left->getStates());
+    joining.setStates(right->getStates());
+    joining.addState(start, end);
+//  transitions
+    start->edge_a = left_start;
+    start->edge_b = right_start;
+    left_end->edge_a = end;
+    right_end->edge_a = end;
 
-
-//transitions
-//    joining.setTransition(start, left->getEpsilon(), State(left->getStart().id+count, TRANSITION));
-//    joining.setTransition(start, left->getEpsilon(), State(right->getStart().id+count, TRANSITION));
-//    joining.setTransition(State(left->getAcceptedState().id+count,TRANSITION), left->getEpsilon(), end);
-//    joining.setTransition(State(right->getAcceptedState().id+count, TRANSITION), left->getEpsilon(), end);
-
-//    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(joining));
+    AutomataVisitor::automatas.push(std::make_unique<NonDeterministic>(joining));
 }
 
-void AutomataVisitor::statesIdentifiers(std::shared_ptr<State> start, int count) {
+void AutomataVisitor::statesIdentifiers(std::shared_ptr<State> start) {
 //  TODO Validate to avoid max-depth recursion
     bool exists = std::find(this->check.begin(), this->check.end(), start) != this->check.end();
     if(start != nullptr && !exists){
-        count++;
+        this->count_states++;
+        start->id = this->count_states;
         this->check.push_back(start);
-        statesIdentifiers(start->edge_a, count);
-        statesIdentifiers(start->edge_b, count);
-        start->id = count;
+        statesIdentifiers(start->edge_a);
+        statesIdentifiers(start->edge_b);
     }
 }
 
@@ -113,8 +130,7 @@ std::string AutomataVisitor::getGraphdata() {
     std::string nodes;
     std::string transitions;
     auto states = std::move(automatas.top());
-    int count = 0;
-    this->statesIdentifiers(states->getStates().front(), count);
+    this->statesIdentifiers(states->getStates().front());
 
     for (auto &x:states->getStates()){
         if(x->flow != ACCEPT){
