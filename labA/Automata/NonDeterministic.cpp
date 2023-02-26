@@ -42,6 +42,7 @@ std::shared_ptr<State> NonDeterministic::getStart() {
         if (x->flow == START)
             return x;
     }
+    return nullptr;
 }
 
 std::shared_ptr<State> NonDeterministic::getEnd() {
@@ -49,6 +50,7 @@ std::shared_ptr<State> NonDeterministic::getEnd() {
         if (x->flow == ACCEPT)
             return x;
     }
+    return nullptr;
 }
 
 void NonDeterministic::addState(std::shared_ptr<State> state_start, std::shared_ptr<State> state_end) {

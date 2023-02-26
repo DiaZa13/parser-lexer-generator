@@ -49,3 +49,9 @@ void Automata::deleteState(std::shared_ptr<State> state) {
     this->states;
 }
 
+void Automata::setState(std::list<std::shared_ptr<State>> states) {
+    for(auto &x: states){
+        this->states.push_back(std::move(x));
+    }
+}
+

@@ -85,6 +85,10 @@ struct State{
     std::shared_ptr<State> edge_a;
     std::shared_ptr<State> edge_b;
 
+    void setEdgeA(std::shared_ptr<State> edge_a){
+        this->edge_a = edge_a;
+    }
+
     explicit State(Symbols &symbol, TYPE type){
         this->symbol = symbol;
         this->flow = START;
@@ -98,6 +102,16 @@ struct State{
 //        this->symbol = symbol;
         this->flow = ACCEPT;
         this->type = EPSILON;
+//      this is the immediately next state
+        this->edge_a = nullptr;
+        this->edge_b = nullptr;
+    };
+
+    explicit State(int id, Symbols &symbol, FLOW flow, TYPE type){
+        this->id = id;
+        this->symbol = symbol;
+        this->flow = flow;
+        this->type = type;
 //      this is the immediately next state
         this->edge_a = nullptr;
         this->edge_b = nullptr;
@@ -119,6 +133,7 @@ public:
 
     void setSymbols(const std::set<Symbols> &symbols);
     void setStates(std::list<std::shared_ptr<State>> states);
+    void setState(std::list<std::shared_ptr<State>> states);
     void setStates(std::list<std::shared_ptr<State>> left, std::list<std::shared_ptr<State>> right);
     void deleteState(std::shared_ptr<State> state);
 };

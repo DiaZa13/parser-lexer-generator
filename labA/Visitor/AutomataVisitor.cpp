@@ -82,8 +82,41 @@ void AutomataVisitor::maybeAutom(std::unique_ptr<NonDeterministic> child) {
 
 void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
 
+    NonDeterministic left;
+    left.setSymbols(child->getSymbols());
+    std::list<std::shared_ptr<State>> new_states;
+//  creates new states same as the child automata
+    int count = 1;
+    for (auto &x: child->getStates()){
+        x->id = count;
+        std::shared_ptr<State> a = std::make_shared<State>(State(count,x->symbol, x->flow, x->type));
+        new_states.push_back(a);
+        count++;
+    }
+//  set transitions
+    for (auto &x: child->getStates()){
+        if (x->edge_a != nullptr){
+            auto node = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->id;});
+            auto edge_a = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->edge_a->id;});
+            if(node != new_states.end()){
+                (*node)->setEdgeA(*edge_a);
+            }
+        }
+        if (x->edge_b != nullptr){
+            auto node = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->id;});
+            auto edge_b = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->edge_b->id;});
+            if(node != new_states.end()){
+                (*node)->setEdgeA(*edge_b);
+            }
+        }
+    }
+    left.setState(new_states);
 
-//    this->concatenationAutom(std::make_unique<NonDeterministic>(), std::move(child_a));
+    this->kleeneAutom(std::move(child));
+    std::unique_ptr<NonDeterministic> right = std::move(AutomataVisitor::automatas.top());
+    this->automatas.pop();
+
+    this->concatenationAutom(std::make_unique<NonDeterministic>(left), std::move(right));
 
 }
 
