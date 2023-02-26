@@ -9,7 +9,7 @@ ErrorsHandler::ErrorsHandler() {
 }
 
 bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expression) {
-    int index_count = 1;
+    int index_count = 0;
     for (auto &value: expression) {
 //          look ahead strategy
         if (!temp_expression.empty()) {
@@ -42,10 +42,10 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
                                        IEPX02);
             ErrorsHandler::errors.push_back(error);
         }
-        if(value->getValue() == -2){
+        if(value->getType() == -2){
             ErrorC error(INVALID_EXPRESSION,
                                        index_count,
-                                       "expecting an operand or symbol",
+                                       "expecting an operand or symbol instead got an unrecognized character",
                                        IEPX01);
             ErrorsHandler::errors.push_back(error);
         }
@@ -56,8 +56,9 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
             ErrorsHandler::Parenthesis close(CLOSE, index_count);
             ErrorsHandler::parenthesis.push_back(close);
         }
+        if(value->getValue() != '.')
+            index_count++;
         temp_expression.push_back(std::move(value));
-        index_count++;
     }
 //    checkout the last element
     if(temp_expression.back()->getType() == 2 || temp_expression.back()->getType() == 4){

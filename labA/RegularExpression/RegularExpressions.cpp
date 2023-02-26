@@ -33,7 +33,7 @@ std::list<std::unique_ptr<Characters>> RegularExpressions::preprocess() {
         else if (std::isalpha(value) || value == '<'){
             RegularExpressions::pexpression.push_back(std::make_unique<Symbols>(value));
         }else
-            RegularExpressions::pexpression.push_back(std::make_unique<Symbols>(-1));
+            RegularExpressions::pexpression.push_back(std::make_unique<Symbols>(value, -1));
     }
     return std::move(pexpression);
 }

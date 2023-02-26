@@ -11,9 +11,9 @@ Symbols::Symbols(char value) {
     id = int(value);
 }
 
-Symbols::Symbols(int id) {
-    this-> value = ' ';
-    id = id;
+Symbols::Symbols(char value, int id) {
+    this-> value = value;
+    this->id = id;
 }
 
 int Symbols::getPrecedence() {

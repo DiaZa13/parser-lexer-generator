@@ -44,7 +44,7 @@ private:
 
 public:
     Symbols();
-    Symbols(int id);
+    Symbols(char value, int id);
     explicit Symbols(char value);
     int getPrecedence() override;
     int getType() override;
