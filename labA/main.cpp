@@ -24,7 +24,8 @@ int main() {
     regularExpressions regex(n_expression);
     regex.preprocess();
     expression = regex.toPostfix();
-
+    for (auto &x: expression)
+        cout<< x->getValue();
     // evaluate the expression with an expression tree
     expressionTree ex_tree(std::move(expression));
     data = ex_tree.graphData();

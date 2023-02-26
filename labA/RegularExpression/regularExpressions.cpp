@@ -22,7 +22,7 @@ void regularExpressions::preprocess() {
 //          ab || a*() || a*b || b() || ()c
             if (std::isalpha(regularExpressions::pexpression.back()->getValue()) && std::isalpha(value) || \
                 regularExpressions::pexpression.back()->getType() == 1 && (value == '(' || std::isalpha(value)) || \
-                regularExpressions::pexpression.back()->getValue() == ')' && std::isalpha(value) || \
+                regularExpressions::pexpression.back()->getValue() == ')' && (std::isalpha(value) ||  value == '(') || \
                 regularExpressions::pexpression.back()->getType() == -1 && value=='('){
                 regularExpressions::pexpression.push_back(std::make_unique<Operators>('.'));
             }
