@@ -17,7 +17,7 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
             if(temp_expression.back()->getValue() == '(' && (value->getType() != -1 && value->getValue() != 4 && value->getType() != 5)){
                 ErrorC error(INVALID_OPERATOR,
                                            index_count,
-                                           "expecting a symbol; instead got an operator or unrecognized character",
+                                           "expecting a symbol instead got an operator or unrecognized character",
                                            IOPX01);
                 ErrorsHandler::errors.push_back(error);
             }else if(temp_expression.back()->getValue() == '(' && value->getValue() == ')'){
@@ -30,7 +30,7 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
 //                checking binary operators
                 ErrorC error(INVALID_OPERATOR,
                                            index_count,
-                                           "expecting a symbol; instead got an operator",
+                                           "expecting a symbol instead got an operator",
                                            IOPX01);
                 ErrorsHandler::errors.push_back(error);
             }
@@ -38,7 +38,7 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
         else if (value->getType() != 4 && value->getType() != -1){
             ErrorC error(INVALID_START_EXPRESSION,
                                        index_count,
-                                       "expecting an open parenthesis or symbol; instead got an operator or unrecognized character",
+                                       "expecting an open parenthesis or symbol instead got an operator or unrecognized character",
                                        IEPX02);
             ErrorsHandler::errors.push_back(error);
         }
