@@ -106,11 +106,15 @@ void AutomataVisitor::positiveAutom(std::unique_ptr<NonDeterministic> child) {
             auto node = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->id;});
             auto edge_b = std::find_if(std::begin(new_states), std::end(new_states),[&] (const std::shared_ptr<State>& state) { return state->id == x->edge_b->id;});
             if(node != new_states.end()){
-                (*node)->setEdgeA(*edge_b);
+                (*node)->setEdgeB(*edge_b);
             }
         }
     }
     left.setState(new_states);
+//  reset id
+    for (auto &x: child->getStates()){
+        x->id = 0;
+    }
 
     this->kleeneAutom(std::move(child));
     std::unique_ptr<NonDeterministic> right = std::move(AutomataVisitor::automatas.top());

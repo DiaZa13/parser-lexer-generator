@@ -89,6 +89,10 @@ struct State{
         this->edge_a = edge_a;
     }
 
+    void setEdgeB(std::shared_ptr<State> edge_b){
+        this->edge_b = edge_b;
+    }
+
     explicit State(Symbols &symbol, TYPE type){
         this->symbol = symbol;
         this->flow = START;
