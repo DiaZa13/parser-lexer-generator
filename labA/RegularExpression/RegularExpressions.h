@@ -10,16 +10,15 @@
 #include <list>
 #include "../Token/Characters.h"
 
-class regularExpressions {
+class RegularExpressions {
 private:
     std::string expression;
     std::list<std::unique_ptr<Characters>> pexpression;
 
 public:
-    explicit regularExpressions(std::string expression);
-    void preprocess();
-    bool checkExpression();
-    std::list<std::unique_ptr<Characters>> toPostfix();
+    explicit RegularExpressions(std::string expression);
+    std::list<std::unique_ptr<Characters>> preprocess();
+    std::list<std::unique_ptr<Characters>> toPostfix(std::list<std::unique_ptr<Characters>> expression);
 
 };
 

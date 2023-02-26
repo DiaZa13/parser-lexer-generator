@@ -9,7 +9,7 @@
 #include <bits/stdc++.h>
 #include "../Token/Characters.h"
 
-class expressionTree {
+class ExpressionTree {
 
 private:
     struct Node {
@@ -29,7 +29,7 @@ private:
     void postOrder(std::unique_ptr<Node> root);
 
 public:
-    explicit expressionTree(std::list<std::unique_ptr<Characters>> expression);
+    explicit ExpressionTree(std::list<std::unique_ptr<Characters>> expression);
     std::string graphData();
 };
 

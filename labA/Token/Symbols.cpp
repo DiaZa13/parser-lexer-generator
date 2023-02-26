@@ -11,11 +11,18 @@ Symbols::Symbols(char value) {
     id = int(value);
 }
 
+Symbols::Symbols(int id) {
+    this-> value = ' ';
+    id = id;
+}
+
 int Symbols::getPrecedence() {
     return 0;
 }
 
 int Symbols::getType() {
+    if (id == -1)
+        return -2;
     return -1;
 }
 

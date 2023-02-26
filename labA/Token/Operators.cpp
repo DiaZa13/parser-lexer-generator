@@ -20,8 +20,10 @@ Operators::Operators(char value) {
         op_type = UNARY;
     else if (value == '.' || value == '|')
         op_type = BINARY;
+    else if (value == '(')
+        op_type = OPEN_PARENTHESIS;
     else
-        op_type = NONE;
+        op_type = CLOSE_PARENTHESIS;
 }
 
 int Operators::getPrecedence() {

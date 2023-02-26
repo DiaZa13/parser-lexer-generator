@@ -8,44 +8,41 @@
 #include <utility>
 #include <cctype>
 #include <bits/stdc++.h>
-#include "regularExpressions.h"
+#include "RegularExpressions.h"
 
-regularExpressions::regularExpressions(std::string expression) {
+RegularExpressions::RegularExpressions(std::string expression) {
     this->expression = std::move(expression);
 }
 
 // this changes the operators to struct values
-void regularExpressions::preprocess() {
+std::list<std::unique_ptr<Characters>> RegularExpressions::preprocess() {
     for (char value: expression) {
-        if (!regularExpressions::pexpression.empty()) {
+        if (!RegularExpressions::pexpression.empty()) {
 //          check all the conditions to add  concatenation
 //          ab || a*() || a*b || b() || ()c
-            if (std::isalpha(regularExpressions::pexpression.back()->getValue()) && std::isalpha(value) || \
-                regularExpressions::pexpression.back()->getType() == 1 && (value == '(' || std::isalpha(value)) || \
-                regularExpressions::pexpression.back()->getValue() == ')' && (std::isalpha(value) ||  value == '(') || \
-                regularExpressions::pexpression.back()->getType() == -1 && value=='('){
-                regularExpressions::pexpression.push_back(std::make_unique<Operators>('.'));
+            if (std::isalpha(RegularExpressions::pexpression.back()->getValue()) && std::isalpha(value) || \
+                RegularExpressions::pexpression.back()->getType() == 1 && (value == '(' || std::isalpha(value)) || \
+                RegularExpressions::pexpression.back()->getValue() == ')' && (std::isalpha(value) || value == '(') || \
+                RegularExpressions::pexpression.back()->getType() == -1 && value == '('){
+                RegularExpressions::pexpression.push_back(std::make_unique<Operators>('.'));
             }
         }
         if (value == '*' || value == '?' || value == '+' || value == '|' || value == '(' || value == ')'){
-            regularExpressions::pexpression.push_back(std::make_unique<Operators>(value));
+            RegularExpressions::pexpression.push_back(std::make_unique<Operators>(value));
         }
-        else{
-            regularExpressions::pexpression.push_back(std::make_unique<Symbols>(value));
-        }
+        else if (std::isalpha(value) || value == '<'){
+            RegularExpressions::pexpression.push_back(std::make_unique<Symbols>(value));
+        }else
+            RegularExpressions::pexpression.push_back(std::make_unique<Symbols>(-1));
     }
+    return std::move(pexpression);
 }
 
-
-bool regularExpressions::checkExpression() {
-    return true;
-}
-
-std::list<std::unique_ptr<Characters>> regularExpressions::toPostfix() {
+std::list<std::unique_ptr<Characters>> RegularExpressions::toPostfix(std::list<std::unique_ptr<Characters>> expression) {
     std::stack<std::unique_ptr<Characters>> exp_operators;
     std::list<std::unique_ptr<Characters>> result;
 
-    for (auto &i: regularExpressions::pexpression) {
+    for (auto &i: expression) {
         // evaluates if the scan value is an operand
         if (i->getType() == -1)
             result.push_back(std::move(i));
@@ -76,7 +73,7 @@ std::list<std::unique_ptr<Characters>> regularExpressions::toPostfix() {
         exp_operators.pop();
     }
 
-    regularExpressions::pexpression.clear();
+    RegularExpressions::pexpression.clear();
 
     return result;
 }

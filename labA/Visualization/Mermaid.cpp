@@ -25,6 +25,5 @@ Mermaid::Mermaid(std::string flow, std::string graph){
 }
 
 void Mermaid::showGraph() {
-//        ShellExecute(NULL, "open", "http://dreamincode.net",
-//                     NULL, NULL, SW_SHOWNORMAL);
+        ShellExecute(NULL, "open", "../graph.html",NULL, NULL, SW_SHOWNORMAL);
 }

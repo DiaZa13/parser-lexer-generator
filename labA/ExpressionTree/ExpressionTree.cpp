@@ -3,9 +3,9 @@
 //
 
 #include <string>
-#include "expressionTree.h"
+#include "ExpressionTree.h"
 
-expressionTree::expressionTree(std::list<std::unique_ptr<Characters>> expression) {
+ExpressionTree::ExpressionTree(std::list<std::unique_ptr<Characters>> expression) {
     for (auto &i: expression) {
         if (i->getType() == -1)
             tree.push(std::make_unique<Node>(std::move(i)));
@@ -29,17 +29,17 @@ expressionTree::expressionTree(std::list<std::unique_ptr<Characters>> expression
     }
 }
 
-void expressionTree::postOrder(std::unique_ptr<Node> root) {
+void ExpressionTree::postOrder(std::unique_ptr<Node> root) {
     if (root != nullptr) {
         postOrder(std::move(root->left));
         postOrder(std::move(root->right));
 //      accepts the visit
-        root->value->accept(expressionTree::visitor);
+        root->value->accept(ExpressionTree::visitor);
     }
 }
 
-std::string expressionTree::graphData() {
-    expressionTree::postOrder(std::move(tree.top()));
+std::string ExpressionTree::graphData() {
+    ExpressionTree::postOrder(std::move(tree.top()));
     std::string data = visitor.getGraphdata();
     return data;
 }

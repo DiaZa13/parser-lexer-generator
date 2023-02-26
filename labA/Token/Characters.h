@@ -30,7 +30,7 @@ public:
 class Operators : public Characters{
 private:
     int precedence;
-    enum {UNARY = 1, BINARY = 2, NONE = 0} op_type;
+    enum {UNARY = 1, BINARY = 2, OPEN_PARENTHESIS = 4, CLOSE_PARENTHESIS = 5} op_type;
 public:
     explicit Operators(char value);
     int getPrecedence() override;
@@ -41,9 +41,11 @@ public:
 class Symbols : public Characters{
 private:
     int id{};
+
 public:
-    explicit Symbols(char value);
     Symbols();
+    Symbols(int id);
+    explicit Symbols(char value);
     int getPrecedence() override;
     int getType() override;
     void accept(Visitor &visitor) override;
