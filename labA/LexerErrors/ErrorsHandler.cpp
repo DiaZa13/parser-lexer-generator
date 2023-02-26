@@ -14,7 +14,7 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
 //          look ahead strategy
         if (!temp_expression.empty()) {
 //            check after an open parenthesis ( -> (OP, CP, S)
-            if(temp_expression.back()->getValue() == '(' && (value->getType() != -1 && value->getValue() != 4 && value->getType() != 5)){
+            if(temp_expression.back()->getValue() == '(' && (value->getType() != -1 && value->getType() != 4 && value->getType() != 5)){
                 ErrorC error(INVALID_OPERATOR,
                                            index_count,
                                            "expecting a symbol instead got an operator or unrecognized character",
@@ -63,7 +63,7 @@ bool ErrorsHandler::checkExpression(std::list<std::unique_ptr<Characters>> expre
 //    checkout the last element
     if(temp_expression.back()->getType() == 2 || temp_expression.back()->getType() == 4){
         ErrorC error(INVALID_OPERATOR,
-                     index_count,
+                     index_count-1,
                      "cannot end the expression with a binary operator or open parenthesis",
                      IOPX01);
         ErrorsHandler::errors.push_back(error);
