@@ -30,6 +30,7 @@ private:
 
 public:
     explicit ExpressionTree(std::list<std::unique_ptr<Characters>> expression);
+    std::unique_ptr<NonDeterministic> getAutomata();
     std::string graphData();
 };
 

@@ -38,6 +38,13 @@ void ExpressionTree::postOrder(std::unique_ptr<Node> root) {
     }
 }
 
+std::unique_ptr<NonDeterministic> ExpressionTree::getAutomata() {
+    ExpressionTree::postOrder(std::move(tree.top()));
+//    std::string data = visitor.getGraphdata();
+//    return data;
+    return visitor.getAutomata();
+}
+
 std::string ExpressionTree::graphData() {
     ExpressionTree::postOrder(std::move(tree.top()));
     std::string data = visitor.getGraphdata();

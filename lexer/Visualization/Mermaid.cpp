@@ -15,7 +15,7 @@ Mermaid::Mermaid(std::string flow, std::string graph){
         file<<"\t " + flow +"\n" + "\t\t" + graph;
         file<<"    </pre>\n"
               "    <script src=\"https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js\"></script>"
-              "    <script> mermaid.initialize({startOnLoad:true});</script>"
+              "    <script> mermaid.initialize({theme:'neutral'});</script>"
               "  </body>\n"
               "</html>";
     }else

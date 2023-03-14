@@ -122,6 +122,7 @@ struct State{
         this->edge_a = nullptr;
         this->edge_b = nullptr;
     };
+
 };
 
 
@@ -172,7 +173,9 @@ public:
     void unionAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> righ);
     void concatenationAutom(std::unique_ptr<NonDeterministic> left, std::unique_ptr<NonDeterministic> right);
     void statesIdentifiers(std::shared_ptr<State> start);
+    std::unique_ptr<NonDeterministic> getAutomata();
     std::string getGraphdata() override;
+
 };
 
 #endif //LANGUAGE_CHARACTERES_H

@@ -1,5 +1,5 @@
 # cmake build
-/labA/cmake-build-debug
+/lexer/cmake-build-debug
 
 #graphs
 labA/*.html

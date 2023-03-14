@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /></head>
+  <body>
+    <pre class="mermaid">
+	 flowchart LR
+		0(("0"))
+		3((("3")))
+		2(("2"))
+		1(("1"))
+		1-- a -->1
+		2-- b -->2
+		0-- c -->3
+		1-- c -->3
+		0-- b -->2
+		2-- c -->3
+		0-- a -->1
+		    </pre>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>    <script> mermaid.initialize({theme:'neutral'});</script>  </body>
+</html>

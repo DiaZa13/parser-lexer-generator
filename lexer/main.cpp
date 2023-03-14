@@ -1,7 +1,6 @@
 /*
  * Created by Zaray Corado on 1/23/2023
  * Implementing an expression tree
- * Based on: https://medium.com/swlh/build-binary-expression-tree-in-python-36c04123e57b
  *
 */
 
@@ -10,6 +9,7 @@
 #include "ExpressionTree/ExpressionTree.h"
 #include "Visualization/Mermaid.h"
 #include "LexerErrors/ErrorsHandler.h"
+#include "Automata/SubsetConstruction.h"
 
 using namespace std;
 
@@ -36,19 +36,25 @@ int main(int argc, char* argv[]) {
             pexpression = regex.toPostfix(std::move(errorsHandler.getTempExpression()));
             // evaluate the expression with an expression tree
             ExpressionTree ex_tree(std::move(pexpression));
-            data = ex_tree.graphData();
+//            data = ex_tree.graphData();
+//            Mermaid graph("flowchart LR", data);
+
+            SubsetConstruction subset(ex_tree.getAutomata());
+            data = subset.getGraphdata();
             Mermaid graph("flowchart LR", data);
-            graph.showGraph();
         }else{
             for (auto &x: errorsHandler.getErrors()){
-                throw std::invalid_argument(ERROR "INVALID_EXPRESSION -> "  INDEX + input.substr(0, x.index) + ERROR + \
+                cerr << (ERROR "INVALID_EXPRESSION -> "  INDEX + input.substr(0, x.index) + ERROR + \
                 input.substr(x.index, 1) + INDEX + input.substr(x.index+1, (input.length() - 1)) + \
-                INDEX + "/Expression:" + to_string(x.index+1) + RESET MESSAGE" :" + x.message + RESET);
+                INDEX + "/Expression:" + to_string(x.index+1) + RESET MESSAGE" :" + x.message + RESET "\n");
             }
+            return -1;
         }
 
-    }else
-        throw std::invalid_argument(ERROR "INVALID_EXPRESSION -> " RESET MESSAGE "Expected regular expression as commandline argument");
+    }else{
+        cerr << (ERROR "INVALID_EXPRESSION -> " RESET MESSAGE "Expected regular expression as commandline argument RESET");
+        return -1;
+    }
 
     return 0;
 }

@@ -196,6 +196,7 @@ std::string AutomataVisitor::getGraphdata() {
     std::string nodes;
     std::string transitions;
     auto states = std::move(automatas.top());
+    this->automatas.pop();
     this->statesIdentifiers(states->getStates().front());
 
     for (auto &x:states->getStates()){
@@ -210,7 +211,12 @@ std::string AutomataVisitor::getGraphdata() {
             nodes += std::to_string(x->id) + "(((\"" + std::to_string(x->id) + "\")))\n\t\t";
         }
     }
+    this->automatas.push(std::move(states));
     return nodes + transitions;
+}
+
+std::unique_ptr<NonDeterministic> AutomataVisitor::getAutomata() {
+    return std::move(this->automatas.top());
 }
 
 
